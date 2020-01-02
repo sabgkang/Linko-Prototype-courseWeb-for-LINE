@@ -2,6 +2,12 @@
 <html lang="en">
 
 <head>
+  <!--  設定參數-->
+  <script>
+    var useLocalAPIs = false;
+    var version = "0.3";
+  </script>
+  
   <meta charset="UTF-8">
   <title>uGym 參加會員</title>
   <!--  <link rel="stylesheet" href="css/main.css">-->
@@ -15,7 +21,10 @@
 
 <body>
   <div id="joinFormHeader" class="w3-container w3-blue">
-    <h2 style="font-family: 'Noto Sans TC'">加入林口運動中心會員</h2>
+    <h2 style="font-family: 'Noto Sans TC'">加入林口運動中心會員 
+      <span id="versionStr" style="float: right; font-size: 0.5em;"></span>
+    </h2>
+    
   </div>
 
   <div id="joinForm" class="w3-container" style="font-family: 'Noto Sans TC'">
@@ -37,13 +46,13 @@
       <label>生日(必填，Inbody 量測使用)</label>
       <input id="birthday" class="w3-input" type="text" placeholder="格式 2020-01-01"></p>      
     <p>     
-      <label>電話</label>
+      <label>電話(必填，聯絡使用)</label>
       <input id="phone" class="w3-input" type="text"></p>
     <p>
       <label>身分證號(必填，作為會員身份辨識，不用做其他用途)</label>
       <input id="identity" class="w3-input" type="text"></p>
     <p>
-      <label>地址</label>
+      <label>地址(建議，聯絡使用)</label>
       <input id="address" class="w3-input" type="text"></p>
     <p>
       <button class="w3-btn w3-block w3-indigo" onclick="addConfirm()">加入會員</button>
@@ -68,14 +77,23 @@
   </div>
 
   <script>
+    $("#versionStr").text("v."+version);
+    if (useLocalAPIs) {
+      console.log("使用 local API 服務");
+    } else {
+      console.log("使用放在 Heroku 上的 API 服務");
+    }
+    
     var memberData = [];
     var dataToAdd = [];
     var paramToSend;
     var inputParamString = location.search;
     var inputError = false;
-    //var userIdString = location.search;        
+    //var userIdString = location.search;  
+    
+    
 
-    // 處理輸入參數
+    // 處理輸入參數 ?displayName=小陳&userId=chen&pictureUrl=www.google.com
     var inputParam = inputParamString.split("&");
     // inputParam[0]="?displayName=..."
     // inputParam[1]="userId=..."
@@ -114,9 +132,13 @@
 
       paramToSend = "?API=00" + "&UserId=" + userId[1];
 
-      var request = new XMLHttpRequest()
-      request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true)
-      //request.open('GET', 'http://localhost:5000' + paramToSend, true)
+      var request = new XMLHttpRequest();
+      if (useLocalAPIs) {
+        request.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+      }
+
 
       request.onload = function() {
         console.log(this.response);
@@ -171,8 +193,12 @@
 
         // call API:01
         var request = new XMLHttpRequest()
-        request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true)
-        //request.open('GET', 'http://localhost:5000' + paramToSend, true)
+        if (useLocalAPIs) {
+          request.open('GET', 'http://localhost:5000' + paramToSend, true);
+        } else {
+          request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+        }
+      
 
         request.onload = function() {
           console.log(this.response);
