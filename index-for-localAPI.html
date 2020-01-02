@@ -115,8 +115,8 @@
       paramToSend = "?API=00" + "&UserId=" + userId[1];
 
       var request = new XMLHttpRequest()
-      request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true)
-      //request.open('GET', 'http://localhost:5000' + paramToSend, true)
+      //request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true)
+      request.open('GET', 'http://localhost:5000' + paramToSend, true)
 
       request.onload = function() {
         console.log(this.response);
@@ -171,8 +171,8 @@
 
         // call API:01
         var request = new XMLHttpRequest()
-        request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true)
-        //request.open('GET', 'http://localhost:5000' + paramToSend, true)
+        //request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true)
+        request.open('GET', 'http://localhost:5000' + paramToSend, true)
 
         request.onload = function() {
           console.log(this.response);
