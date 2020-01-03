@@ -13,7 +13,7 @@
   <!--  <link rel="stylesheet" href="css/main.css">-->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <!--  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">-->
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
   <!--  <script src="js/jquery.twzipcode.min.js"></script>-->
 
@@ -195,8 +195,8 @@
     // inputParam[2]="pictureUrl=..."
     try {
       var displayName = inputParam[0].split("=");
-      var userId = inputParam[1].split("=");
-      var pictureUrl = inputParam[2].split("=");
+      var userId      = inputParam[1].split("=");
+      var pictureUrl  = inputParam[2].split("=");
     } catch (e) {
       alert("輸入參數錯誤");
       $("#joinForm").hide();
@@ -338,10 +338,11 @@
     function readCourses(){
       console.log("call API to Read Database");
       // hard coded data, TODO: replaced with APIs ==========================================
-      var userName = decodeURI(displayName[1]);
+      userName = decodeURI(displayName[1]);
       courseData = [
         ["U0003", "TEST 3", "測試 老師 #3", "2020-1-23 19:00", "300", "30", "cat", "300", ""],        
         ["U0004", "TEST 4", "測試 老師 #4", "2020-1-24 20:00", "400", "40", "dale", "400", ""],
+        ["U0005", "TEST 5", "測試 老師 #5", "2020-1-25 20:00", "500", "50", "dale", "500", ""],        
       ];
       courseHistory = [
         ["U0001", "TEST 1", "測試 老師 #1", "2020-1-22 19:30", "100", "10", "bob", "200", ""],
@@ -349,9 +350,10 @@
       ];
       courseMember =[
         ["U0001", ["小陳", "已繳費", "已簽到"], ["小琦", "未繳費", "未簽到"]],
-        ["U0002", ["小琦", "已繳費", "已簽到"], ["小王", "已繳費", "未簽到"]],     
-        ["U0003", ["小陳", "未繳費", "未簽到"],                          ],
-        ["U0004"                                                       ],
+        ["U0002", ["小琦", "已繳費", "已簽到"], ["小王", "已繳費", "未簽到"], ["小陳", "已繳費", "未簽到"]],     
+        ["U0003", ["小陳", "已繳費", "未簽到"],                          ],
+        ["U0004", ["小陳", "未繳費", "未簽到"],                          ],
+        ["U0005",                          ],        
       ];
       // =====================================================================================
       
@@ -398,13 +400,10 @@
       var cardStr5='<span style="float:right">費用: ';    
       var cardStr6='</span></p> </div> <button class="w3-button w3-block w3-indigo" onclick="cardButton(\'';
       var cardStr7='\')" >報名</button> </div>';
+      
+      var cardStr6_1='</span></p> </div> <button class="w3-button w3-block w3-grey">';
+      var cardStr7_1='</button> </div>';     
 
-//      var 課程編號=["U002", "U003", "U004"];
-//      var 課程名稱=["燃燒吧", "夏日風情", "瑜珈你和我"];
-//      var 老師名字=["小陳肌肉男", "曉華", "小雯"];
-//      var 日期時間=["2020-01-02 18:30", "2020-01-03 19:00", "2020-01-04 18:00"];
-//      var 卡路里=["100", "80", "50"]
-//      var 費用=["100", "200", "300"];
       var 課程編號=[];
       var 課程名稱=[];
       var 老師名字=[];
@@ -422,7 +421,7 @@
             老師名字.push(course[2]);
             日期時間.push(course[3]);
             卡路里.push(course[4]);
-            費用.push(course[5]);            
+            費用.push(course[7]);            
           }
         });
       });
@@ -440,7 +439,7 @@
 
         $("#availableCourses").append(cardStr);
       }
-      // ============================================================== 
+      // ================================================================================ 
 
       // 新增 已報名課程 卡片 ==============================================================
       課程編號=[];  課程名稱=[];  老師名字=[];  日期時間=[];  卡路里=[];   費用=[];        
@@ -453,25 +452,76 @@
             老師名字.push(course[2]);
             日期時間.push(course[3]);
             卡路里.push(course[4]);
-            費用.push(course[5]);            
+            費用.push(course[7]);            
           }
         });
       });
 
       var cardStr;
+      var paid=false;
       for (var i=0;i<inCourse.length;i++) {
+        // 尋找是否已繳費
+        paid=false;
+        courseMember.forEach(function(course, index, array){
+          if (course[0]==inCourse[i]) {
+            for (var j=1;j<course.length;j++){
+              if (course[j][0]==userName && course[j][1]=="已繳費") {
+                paid=true;
+              }
+            };
+          }
+        });
+         
+        var paidStr = (paid)?"已繳費":"請到櫃檯繳費";
+        // 合成字串
         cardStr = cardStr1+課程編號[i] + " - " +課程名稱[i]
                  +cardStr2+老師名字[i] 
                  +cardStr3+日期時間[i]
                  +cardStr4+卡路里[i]
                  +cardStr5+費用[i]      
-                 +cardStr6+(i+10)
-                 +cardStr7;
-        //console.log(cardStr);
+                 +cardStr6_1+paidStr
+                 +cardStr7_1;
+        console.log(cardStr);
 
         $("#inCourses").append(cardStr);
       }      
-      // ==============================================================      
+      // ===================================================================================      
+      
+      // 新增 過期已報名課程 卡片 ==============================================================
+      課程編號=[];  課程名稱=[];  老師名字=[];  日期時間=[];  卡路里=[];   費用=[];        
+      myHistory.forEach(function(courseN, indexN, arrayN){
+        courseHistory.forEach(function(course, index, array){
+          if (courseN == course[0]) {
+            //console.log(course);
+            課程編號.push(course[0]);
+            課程名稱.push(course[1]);
+            老師名字.push(course[2]);
+            日期時間.push(course[3]);
+            卡路里.push(course[4]);
+            費用.push(course[7]);            
+          }
+        });
+      });
+
+      var cardStr;
+      for (var i=0;i<myHistory.length;i++) {
+        cardStr = cardStr1+課程編號[i] + " - " +課程名稱[i]
+                 +cardStr2+老師名字[i] 
+                 +cardStr3+日期時間[i]
+                 +cardStr4+卡路里[i]
+                 +cardStr5+費用[i]      
+                 +cardStr6_1
+                 +cardStr7_1;
+        //console.log(cardStr);
+
+        $("#oldCourses").append(cardStr);
+      }      
+      // ===================================================================================       
+      
+      
+      
+      
+      
     };
         
     
