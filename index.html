@@ -9,13 +9,37 @@
   </script>
   
   <meta charset="UTF-8">
-  <title>uGym 參加會員</title>
+  <title>uGym 團課</title>
   <!--  <link rel="stylesheet" href="css/main.css">-->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <!--  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">-->
   <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
   <!--  <script src="js/jquery.twzipcode.min.js"></script>-->
+
+  <link rel="stylesheet" href="css/loading.css" />
+  <script src="js/loading.js"></script>  
+
+<!--
+  <style>
+  body, html {
+    height: 100%;
+    margin: 0;
+  }
+  .bg {
+    /* The image used */
+    background-image: url(photo-1547919307-1ecb10702e6f.jpg);
+
+    /* Full height */
+    height: 100%; 
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  </style>
+-->
 
 </head>
 
@@ -27,23 +51,23 @@
     
   </div>
 
-  <div id="joinForm" class="w3-container" style="font-family: 'Noto Sans TC'">
+  <div id="joinForm" class="w3-container bg" style="font-family: 'Noto Sans TC'">
     <p>
       <label>姓名(必填)</label>
       <input id="name" class="w3-input" type="text"></p>
     <p>
-      <label>姓別(必填，Inbody 量測使用)</label>
+      <label>姓別(必填，Inbody 量測需要)</label>
       <select id="gender" class="w3-select" name="option">
-        <option value="" disabled selected>男，女或保密</option>
+<!--        <option value="" disabled selected>男，女或保密</option>-->
         <option value="男">男</option>
         <option value="女">女</option>
-        <option value="保密">保密</option>
+<!--        <option value="保密">保密</option>-->
       </select></p>
     <p>
-      <label>身高(必填，Inbody 量測使用)</label>
+      <label>身高(必填，Inbody 量測需要)</label>
       <input id="bodyHeight" class="w3-input" type="text" placeholder="例如: 180cm"></p>
     <p>
-      <label>生日(必填，Inbody 量測使用)</label>
+      <label>生日(必填，Inbody 量測需要)</label>
       <input id="birthday" class="w3-input" type="text" placeholder="格式 2020-01-01"></p>      
     <p>     
       <label>電話(必填，聯絡使用)</label>
@@ -75,6 +99,72 @@
       <h3 style="font-family: 'Noto Sans TC'">您以前已經加入會員!</h3>
     </div>
   </div>
+  
+<!--    ---------- 以下是 團課資料  --------------------------------------------------- ----->
+  <div id="courseSection" style="display: none">
+    <div id="courseSectionHeader" class="w3-container w3-blue">
+      <h2 style="font-family: 'Noto Sans TC'">我的團課 
+        <span id="versionStr" style="float: right; font-size: 0.5em;"></span>
+      </h2>
+    </div> 
+         
+    <div class="w3-container" id="availableCourses" style="font-family: 'Noto Sans TC'">
+      <h4 style="font-family: 'Noto Sans TC'">可報名課程</h4>
+
+  <!--
+      <div class="w3-card-4" style="width:100%">
+        <header class="w3-container w3-teal">
+          <h4>課程名稱 - </h4>
+        </header>
+        <div class="w3-container">
+          <p>老師名字:</p>
+          <p>日期時間:</p>
+          <p>費用:</p>
+        </div>
+        <button class="w3-button w3-block w3-indigo" onclick="cardButton(1)">報名</button>
+      </div>
+  -->
+    </div>   
+    
+    <hr>
+    <div class="w3-container" id="inCourses" style="font-family: 'Noto Sans TC'">
+      <h4 style="font-family: 'Noto Sans TC'">已報名課程</h4>
+
+  <!--
+      <div class="w3-card-4" style="width:100%">
+        <header class="w3-container w3-teal">
+          <h4>課程名稱 - </h4>
+        </header>
+        <div class="w3-container">
+          <p>老師名字:</p>
+          <p>日期時間:</p>
+          <p>費用:</p>
+        </div>
+        <button class="w3-button w3-block w3-indigo" onclick="cardButton(1)">報名</button>
+      </div>
+  -->
+    </div> 
+                 
+    <hr>
+    <div class="w3-container" id="oldCourses" style="font-family: 'Noto Sans TC'">
+      <h4 style="font-family: 'Noto Sans TC'">已到期報名課程</h4>
+
+  <!--
+      <div class="w3-card-4" style="width:100%">
+        <header class="w3-container w3-teal">
+          <h4>課程名稱 - </h4>
+        </header>
+        <div class="w3-container">
+          <p>老師名字:</p>
+          <p>日期時間:</p>
+          <p>費用:</p>
+        </div>
+        <button class="w3-button w3-block w3-indigo" onclick="cardButton(1)">報名</button>
+      </div>
+  -->
+    </div>                  
+                  
+  </div>  
 
   <script>
     $("#versionStr").text("v."+version);
@@ -91,8 +181,13 @@
     var inputError = false;
     //var userIdString = location.search;  
     
-    
+    var courseData=[];
+    var courseHistory=[];
+    var courseMember=[];    
 
+    $("#joinForm").hide();
+    $("#joinFormHeader").hide();
+    
     // 處理輸入參數 ?displayName=小陳&userId=U12345678901234567890123456789012&pictureUrl=www.google.com
     var inputParam = inputParamString.split("&");
     // inputParam[0]="?displayName=..."
@@ -139,20 +234,28 @@
         request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
       }
 
-
       request.onload = function() {
+        $.loading.end();
         console.log(this.response);
-        if (this.response == "API:00 會員已存在") {
+        if (this.response == "API:00 會員不存在") {
+          $("#joinForm").show();
+          $("#joinFormHeader").show();
+          alert("還不是會員，請先加入為會員")
+        } else {
           $("#joinForm").hide();
           $("#joinFormHeader").hide();
           //$("#alreadyMessage").css("display", "block");            
           alert("您以前已經加入會員! 前往團課");
           // 顯示團課表格
           console.log("前往團課");
-
+          $("#courseSection").css("display", "block");
+          readCourses();
+          addCourseCards();
         }
       }
       // Send API request 
+      $.loading.start('檢查是否已是會員');
+     
       request.send();
     }
 
@@ -215,6 +318,9 @@
             alert("會員加入成功，前往團課")
             // 顯示團課表格
             console.log("前往團課");
+            $("#courseSection").css("display", "block");
+            readCourses();
+            addCourseCards();
 
           } else {
             alert("會員加入失敗，請洽管理員")
@@ -228,8 +334,219 @@
 
       };
     };
-  </script>
 
+    function readCourses(){
+      console.log("call API to Read Database");
+      // hard coded data, TODO: replaced with APIs ==========================================
+      var userName = decodeURI(displayName[1]);
+      courseData = [
+        ["U0003", "TEST 3", "測試 老師 #3", "2020-1-23 19:00", "300", "30", "cat", "300", ""],        
+        ["U0004", "TEST 4", "測試 老師 #4", "2020-1-24 20:00", "400", "40", "dale", "400", ""],
+      ];
+      courseHistory = [
+        ["U0001", "TEST 1", "測試 老師 #1", "2020-1-22 19:30", "100", "10", "bob", "200", ""],
+        ["U0002", "TEST 2", "測試 老師 #2", "2020-1-21 18:30", "200", "20", "alan", "100", ""],       
+      ];
+      courseMember =[
+        ["U0001", ["小陳", "已繳費", "已簽到"], ["小琦", "未繳費", "未簽到"]],
+        ["U0002", ["小琦", "已繳費", "已簽到"], ["小王", "已繳費", "未簽到"]],     
+        ["U0003", ["小陳", "未繳費", "未簽到"],                          ],
+        ["U0004"                                                       ],
+      ];
+      // =====================================================================================
+      
+      notInCourse=[];
+      inCourse=[];
+      myHistory=[];     
+      var attended=false;
+      var isNow=false;
+      var inHistory=false; 
+      courseMember.forEach(function(course, index, array){  
+        attended = false;        
+        for (var i=1; i<course.length;i++) {
+          //console.log(course[i][0]);
+          if (course[i][0] == userName) {
+            //console.log(course[0],userName, "已參加")
+            attended = true;
+          }
+        };
+        
+        isNow = false;
+        courseData.forEach(function(newCourse, index, array){
+          if (newCourse[0]==course[0]) isNow = true; 
+        });
+        
+        inHistory = false;
+        courseHistory.forEach(function(oldCourse, index, array){
+          if (oldCourse[0]==course[0]) inHistory = true; 
+        });
+        
+        if (!attended && isNow)     notInCourse.push(course[0]);
+        if (attended  && isNow)     inCourse.push(course[0]);        
+        if (attended  && inHistory) myHistory.push(course[0]);
+        
+      });      
+    };
+      
+    function addCourseCards(){
+      // cardStr1+課程名稱+cardStr2+老師名字+cardStr3+日期時間+cardStr4+費用+cardStr5+index+cardStr6
+      var cardStr1='<br> <div class="w3-card-4" style="width:100%;"> <header class="w3-container w3-teal"> \
+                    <h5 class="s-header" style="font-family: \'Noto Sans TC\'">'; //課程編號及課程名稱
+      var cardStr2='</h5> </header> <div class="w3-container" > <p>老師: ';
+      var cardStr3='<span style="float:right">日期:';
+      var cardStr4='</span><p>卡路里: ';
+      var cardStr5='<span style="float:right">費用: ';    
+      var cardStr6='</span></p> </div> <button class="w3-button w3-block w3-indigo" onclick="cardButton(\'';
+      var cardStr7='\')" >報名</button> </div>';
+
+//      var 課程編號=["U002", "U003", "U004"];
+//      var 課程名稱=["燃燒吧", "夏日風情", "瑜珈你和我"];
+//      var 老師名字=["小陳肌肉男", "曉華", "小雯"];
+//      var 日期時間=["2020-01-02 18:30", "2020-01-03 19:00", "2020-01-04 18:00"];
+//      var 卡路里=["100", "80", "50"]
+//      var 費用=["100", "200", "300"];
+      var 課程編號=[];
+      var 課程名稱=[];
+      var 老師名字=[];
+      var 日期時間=[];
+      var 卡路里=[]
+      var 費用=[];      
+      
+      // 新增 可報名課程 卡片 ==============================================================      
+      notInCourse.forEach(function(courseN, indexN, arrayN){
+        courseData.forEach(function(course, index, array){
+          if (courseN == course[0]) {
+            //console.log(course);
+            課程編號.push(course[0]);
+            課程名稱.push(course[1]);
+            老師名字.push(course[2]);
+            日期時間.push(course[3]);
+            卡路里.push(course[4]);
+            費用.push(course[5]);            
+          }
+        });
+      });
+
+      var cardStr;
+      for (var i=0;i<notInCourse.length;i++) {
+        cardStr = cardStr1+課程編號[i] + " - " +課程名稱[i]
+                 +cardStr2+老師名字[i] 
+                 +cardStr3+日期時間[i]
+                 +cardStr4+卡路里[i]
+                 +cardStr5+費用[i]      
+                 +cardStr6+課程編號[i]
+                 +cardStr7;
+        //console.log(cardStr);
+
+        $("#availableCourses").append(cardStr);
+      }
+      // ============================================================== 
+
+      // 新增 已報名課程 卡片 ==============================================================
+      課程編號=[];  課程名稱=[];  老師名字=[];  日期時間=[];  卡路里=[];   費用=[];        
+      inCourse.forEach(function(courseN, indexN, arrayN){
+        courseData.forEach(function(course, index, array){
+          if (courseN == course[0]) {
+            //console.log(course);
+            課程編號.push(course[0]);
+            課程名稱.push(course[1]);
+            老師名字.push(course[2]);
+            日期時間.push(course[3]);
+            卡路里.push(course[4]);
+            費用.push(course[5]);            
+          }
+        });
+      });
+
+      var cardStr;
+      for (var i=0;i<inCourse.length;i++) {
+        cardStr = cardStr1+課程編號[i] + " - " +課程名稱[i]
+                 +cardStr2+老師名字[i] 
+                 +cardStr3+日期時間[i]
+                 +cardStr4+卡路里[i]
+                 +cardStr5+費用[i]      
+                 +cardStr6+(i+10)
+                 +cardStr7;
+        //console.log(cardStr);
+
+        $("#inCourses").append(cardStr);
+      }      
+      // ==============================================================      
+    };
+        
+    
+ 
+    
+    function cardButton(index){
+        console.log("card Button:", index, typeof index);
+    }
+    
+    
+// 以下改用 API    
+//    function readCourses(){
+//      console.log("Read Database");
+//
+//      $.loading.start('讀取課程資料');
+//
+//      var toRead = 2;
+//      var readTimes = 0;
+//      firebase.database().ref('users/林口運動中心/團課課程').once('value').then(function (snapshot) {
+//        console.log("data read done");
+//        readTimes++;
+//        var result = snapshot.val();
+//        courseData = JSON.parse(result.現在課程);
+//        courseHistory = JSON.parse(result.過去課程);
+//        console.log("courseData/history read done");
+//
+////        if (courseData.length>0) {
+////          var tmp1 = courseData[courseData.length - 1][0];
+////          var tmp2 = parseInt(tmp1.substr(1, 4));
+////        } else tmp2 = 0;
+////
+////        if (courseHistory.length>0) {    
+////          var tmp3 = courseHistory[courseHistory.length - 1][0];
+////          var tmp4 = parseInt(tmp3.substr(1, 4));  
+////        } else tmp4 = 0;
+////
+////        courseNum = (tmp4 > tmp2)? tmp4:tmp2;
+//
+//        //console.log(courseNum);
+//
+//        //refreshCourse();
+//
+//        if (readTimes == toRead) $.loading.end();
+//      });
+//
+////      firebase.database().ref('users/林口運動中心/客戶管理').once('value').then(function (snapshot) {
+////        console.log("member read done");
+////        readTimes++;
+////        var result = snapshot.val();
+////        memberData = JSON.parse(result.會員資料);
+////
+////        if (readTimes == toRead) $.loading.end();
+////      });
+//
+//      firebase.database().ref('users/林口運動中心/課程管理').once('value').then(function (snapshot) {
+//        console.log("courseMember read done");
+//        readTimes++;
+//        var result = snapshot.val();
+//        courseMember = JSON.parse(result.課程會員);
+//
+//        if (readTimes == toRead) $.loading.end();
+//      });
+//
+////      firebase.database().ref('users/林口運動中心/教練管理').once('value').then(function (snapshot) {
+////        console.log("Coach read done");
+////        readTimes++;
+////        var result = snapshot.val();
+////        coachSet = JSON.parse(result.老師資料);
+////
+////        if (readTimes == toRead) $.loading.end();
+////      });  
+//
+//    };
+    
+  </script>
 
 </body>
 

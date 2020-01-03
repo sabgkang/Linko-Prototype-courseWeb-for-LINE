@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<style>
+  .w3-card-4{
+    font-family: 'Noto Sans TC';
+  }
+  
+  .s-header{
+    font-family: 'Noto Sans TC';
+  }
+</style>
+<body>
+
+  <div class="w3-container" id="availableCourses">
+    <h4 style="font-family: 'Noto Sans TC'">可報名課程</h4>
+
+<!--
+    <div class="w3-card-4" style="width:100%">
+      <header class="w3-container w3-teal">
+        <h4>課程名稱 - </h4>
+      </header>
+      <div class="w3-container">
+        <p>老師名字:</p>
+        <p>日期時間:</p>
+        <p>費用:</p>
+      </div>
+      <button class="w3-button w3-block w3-indigo" onclick="joinCourse(1)">報名</button>
+    </div>
+-->
+  </div>
+
+  <hr>
+  <div class="w3-container" id="attendCourses" style="font-family: 'Noto Sans TC'">
+    <h4 style="font-family: 'Noto Sans TC'">已報名課程</h4>
+
+    <div class="w3-card-4  forTest" style="width:100%">
+      <header class="w3-container w3-teal">
+        <h5 style="font-family: 'Noto Sans TC'">課程名稱 - </h5>
+      </header>
+      <div class="w3-container">
+        <p>老師名字:日期時間:費用:</p>
+      </div>
+      <button class="w3-button w3-block w3-dark-gray" onclick="dueCourse(2)" >細節</button>
+    </div>
+  </div>
+  
+  <script>
+    // cardStr1+課程名稱+cardStr2+老師名字+cardStr3+日期時間+cardStr4+費用+cardStr5+index+cardStr6
+    var cardStr1='<br> <div class="w3-card-4" style="width:100%;"> <header class="w3-container w3-teal"> <h5 class="s-header">';
+    var cardStr2='</h5> </header> <div class="w3-container"> <p>老師: ';
+    var cardStr3='<span style="float:right">日期:';
+    var cardStr4='</span><p>卡路里: ';
+    var cardStr5='<span style="float:right">費用: ';    
+    var cardStr6='</span></p> </div> <button class="w3-button w3-block w3-indigo" onclick="joinCourse(';
+    var cardStr7=')" >報名</button> </div>';
+    
+    var 課程編號=["U002", "U003", "U004"];
+    var 課程名稱=["燃燒吧", "夏日風情", "瑜珈你和我"];
+    var 老師名字=["小陳肌肉男", "曉華", "小雯"];
+    var 日期時間=["2020-01-02 18:30", "2020-01-03 19:00", "2020-01-04 18:00"];
+    var 卡路里=["100", "80", "50"]
+    var 費用=["100", "200", "300"];
+
+    for (var i=0;i<3;i++) {
+      var cardStr = cardStr1+課程編號[i] + " - " +課程名稱[i]
+                   +cardStr2+老師名字[i] 
+                   +cardStr3+日期時間[i]
+                   +cardStr4+卡路里[i]
+                   +cardStr5+費用[i]      
+                   +cardStr6+i
+                   +cardStr7;
+      console.log(cardStr);
+      
+      $("#availableCourses").append(cardStr);
+      
+    }
+    function joinCourse(index){
+      console.log("join course", index);
+    }
+  </script>
+
+</body>
+
+</html>
