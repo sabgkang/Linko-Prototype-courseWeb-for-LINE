@@ -184,7 +184,12 @@
     var courseData=[];
     var courseHistory=[];
     var courseMember=[];    
+    var allDataReady=0;
 
+    notInCourse=[];
+    inCourse=[];
+    myHistory=[];     
+    
     $("#joinForm").hide();
     $("#joinFormHeader").hide();
     
@@ -245,12 +250,12 @@
           $("#joinForm").hide();
           $("#joinFormHeader").hide();
           //$("#alreadyMessage").css("display", "block");            
-          alert("您以前已經加入會員! 前往團課");
+          //alert("您以前已經加入會員! 前往團課");
           // 顯示團課表格
           console.log("前往團課");
           $("#courseSection").css("display", "block");
           readCourses();
-          addCourseCards();
+          //addCourseCards();
         }
       }
       // Send API request 
@@ -320,7 +325,7 @@
             console.log("前往團課");
             $("#courseSection").css("display", "block");
             readCourses();
-            addCourseCards();
+            //addCourseCards();
 
           } else {
             alert("會員加入失敗，請洽管理員")
@@ -337,60 +342,158 @@
 
     function readCourses(){
       console.log("call API to Read Database");
-      // hard coded data, TODO: replaced with APIs ==========================================
       userName = decodeURI(displayName[1]);
-      courseData = [
-        ["U0003", "TEST 3", "測試 老師 #3", "2020-1-23 19:00", "300", "30", "cat", "300", ""],        
-        ["U0004", "TEST 4", "測試 老師 #4", "2020-1-24 20:00", "400", "40", "dale", "400", ""],
-        ["U0005", "TEST 5", "測試 老師 #5", "2020-1-25 20:00", "500", "50", "dale", "500", ""],        
-      ];
-      courseHistory = [
-        ["U0001", "TEST 1", "測試 老師 #1", "2020-1-22 19:30", "100", "10", "bob", "200", ""],
-        ["U0002", "TEST 2", "測試 老師 #2", "2020-1-21 18:30", "200", "20", "alan", "100", ""],       
-      ];
-      courseMember =[
-        ["U0001", ["Paul Kang", "已繳費", "已簽到"], ["小陳", "未繳費", "未簽到"]],
-        ["U0002", ["小琦", "已繳費", "已簽到"], ["小陳", "已繳費", "未簽到"], ["Paul Kang", "已繳費", "未簽到"]],     
-        ["U0003", ["Paul Kang", "已繳費", "未簽到"],                          ],
-        ["U0004", ["Paul Kang", "未繳費", "未簽到"],                          ],
-        ["U0005",                          ],        
-      ];
+      
+      // hard coded data, TODO: replaced with APIs ==========================================
+
+//      courseData = [
+//        ["U0003", "TEST 3", "測試 老師 #3", "2020-1-23 19:00", "300", "30", "cat", "300", ""],        
+//        ["U0004", "TEST 4", "測試 老師 #4", "2020-1-24 20:00", "400", "40", "dale", "400", ""],
+//        ["U0005", "TEST 5", "測試 老師 #5", "2020-1-25 20:00", "500", "50", "dale", "500", ""],        
+//      ];
+//      courseHistory = [
+//        ["U0001", "TEST 1", "測試 老師 #1", "2020-1-22 19:30", "100", "10", "bob", "200", ""],
+//        ["U0002", "TEST 2", "測試 老師 #2", "2020-1-21 18:30", "200", "20", "alan", "100", ""],       
+//      ];
+//      courseMember =[
+//        ["U0001", ["Paul Kang", "已繳費", "已簽到"], ["小陳", "未繳費", "未簽到"]],
+//        ["U0002", ["小琦", "已繳費", "已簽到"], ["小陳", "已繳費", "未簽到"], ["Paul Kang", "已繳費", "未簽到"]],     
+//        ["U0003", ["Paul Kang", "已繳費", "未簽到"],                          ],
+//        ["U0004", ["Paul Kang", "未繳費", "未簽到"],                          ],
+//        ["U0005",                          ],        
+//      ];
       // =====================================================================================
       
-      notInCourse=[];
-      inCourse=[];
-      myHistory=[];     
-      var attended=false;
-      var isNow=false;
-      var inHistory=false; 
-      courseMember.forEach(function(course, index, array){  
-        attended = false;        
-        for (var i=1; i<course.length;i++) {
-          //console.log(course[i][0]);
-          if (course[i][0] == userName) {
-            //console.log(course[0],userName, "已參加")
-            attended = true;
-          }
-        };
-        
-        isNow = false;
-        courseData.forEach(function(newCourse, index, array){
-          if (newCourse[0]==course[0]) isNow = true; 
-        });
-        
-        inHistory = false;
-        courseHistory.forEach(function(oldCourse, index, array){
-          if (oldCourse[0]==course[0]) inHistory = true; 
-        });
-        
-        if (!attended && isNow)     notInCourse.push(course[0]);
-        if (attended  && isNow)     inCourse.push(course[0]);        
-        if (attended  && inHistory) myHistory.push(course[0]);
-        
-      });      
+
+      $.loading.start('讀取資料');
+      getDataByAPIs();
+
+      var checkDataReady = setInterval(function(){ 
+        console.log("aaa", allDataReady);
+        if (allDataReady==3) {
+          clearInterval(checkDataReady);
+          console.log("Data is ready");
+          //alert("Data is ready");
+          $.loading.end();
+          notInCourse=[];
+          inCourse=[];
+          myHistory=[];     
+          var attended=false;
+          var isNow=false;
+          var inHistory=false; 
+          courseMember.forEach(function(course, index, array){  
+            attended = false;        
+            for (var i=1; i<course.length;i++) {
+              //console.log(course[i][0]);
+              if (course[i][0] == userName) {
+                //console.log(course[0],userName, "已參加")
+                attended = true;
+              }
+            };
+
+            isNow = false;
+            courseData.forEach(function(newCourse, index, array){
+              if (newCourse[0]==course[0]) isNow = true; 
+            });
+
+            inHistory = false;
+            courseHistory.forEach(function(oldCourse, index, array){
+              if (oldCourse[0]==course[0]) inHistory = true; 
+            });
+
+            if (!attended && isNow)     notInCourse.push(course[0]);
+            if (attended  && isNow)     inCourse.push(course[0]);        
+            if (attended  && inHistory) myHistory.push(course[0]);
+          });
+          addCourseCards();
+        }
+      }, 100);
+     
     };
+  
+  
+    function getDataByAPIs() {
+      var request1, reuquest2, request2;
+      // call API:10 =========================================================================
+      paramToSend = "?API=10";      
+      request1 = new XMLHttpRequest()
+      if (useLocalAPIs) {
+        request1.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request1.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+      }
+
+      request1.onload = function() {
+        if (this.response != "API:10 courseData 讀取失敗") {
+          courseData = JSON.parse(this.response);
+          console.log(courseData);
+          allDataReady++;
+          request2.send();
+        } else {
+          clearInterval(checkDataReady);
+          alert("API:10 courseData 讀取失敗")
+        }
+
+      }
+      // Send request
+      request1.send();
+      // =====================================================================================      
+
+      // call API:11 =========================================================================
+      paramToSend = "?API=11";      
+      request2= new XMLHttpRequest()
+      if (useLocalAPIs) {
+        request2.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request2.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+      }
+
+      request2.onload = function() {
+        if (this.response != "API:11 courseHistory 讀取失敗") {
+          courseHistory = JSON.parse(this.response);
+          console.log(courseHistory);
+          allDataReady++;
+          request3.send();          
+        } else {
+          clearInterval(checkDataReady);
+          alert("API:11 courseHistory 讀取失敗")
+        }
+
+      }
+      // Send request
+      //request2.send();
+      // =====================================================================================      
       
+
+      // call API:12 =========================================================================
+      paramToSend = "?API=12";      
+      request3 = new XMLHttpRequest()
+      if (useLocalAPIs) {
+        request3.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request3.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+      }
+
+      request3.onload = function() {
+        if (this.response != "API:12 courseMember 讀取失敗") {
+          courseMember = JSON.parse(this.response);
+          console.log(courseMember);
+          allDataReady++;
+        } else {
+          clearInterval(checkDataReady);
+          alert("API:12 courseMember 讀取失敗")
+        }
+
+      }
+      // Send request
+      //request3.send();
+      // ===================================================================================== 
+      
+    }
+    
     function addCourseCards(){
+      console.log("add cards");
+      
       // cardStr1+課程名稱+cardStr2+老師名字+cardStr3+日期時間+cardStr4+費用+cardStr5+index+cardStr6
       var cardStr1='<br> <div class="w3-card-4" style="width:100%;"> <header class="w3-container w3-teal"> \
                     <h5 class="s-header" style="font-family: \'Noto Sans TC\'">'; //課程編號及課程名稱
@@ -481,7 +584,7 @@
                  +cardStr5+費用[i]      
                  +cardStr6_1+paidStr
                  +cardStr7_1;
-        console.log(cardStr);
+        //console.log(cardStr);
 
         $("#inCourses").append(cardStr);
       }      
