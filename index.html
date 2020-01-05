@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="en">
 
+<!--處理輸入參數 ?displayName=小陳&userId=U12345678901234567890123456789012&pictureUrl=www.google.com-->
+
 <head>
   <!--  設定參數-->
   <script>
     var useLocalAPIs = false;
-    var version = "0.31";
+    var version = "0.32";
   </script>
   
   <meta charset="UTF-8">
@@ -14,6 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">  
   <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
   <!--  <script src="js/jquery.twzipcode.min.js"></script>-->
 
@@ -109,7 +112,9 @@
     </div> 
          
     <div class="w3-container" id="availableCourses" style="font-family: 'Noto Sans TC'">
-      <h4 style="font-family: 'Noto Sans TC'">可報名課程</h4>
+      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCourses()"><i class="fa fa-refresh" style="margin-left: -3px;"></i></button></span>
+      <h4 style="font-family: 'Noto Sans TC'; display: inline;">可報名課程</h4>
+      
 
   <!--
       <div class="w3-card-4" style="width:100%">
@@ -121,14 +126,15 @@
           <p>日期時間:</p>
           <p>費用:</p>
         </div>
-        <button class="w3-button w3-block w3-indigo" onclick="cardButton(1)">報名</button>
+        <button class="w3-button w3-block w3-indigo" onclick="報名課程(1)">報名</button>
       </div>
   -->
     </div>   
     
     <hr>
     <div class="w3-container" id="inCourses" style="font-family: 'Noto Sans TC'">
-      <h4 style="font-family: 'Noto Sans TC'">已報名課程</h4>
+      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCourses()"><i class="fa fa-refresh" style="margin-left: -3px"></i></button></span>     
+      <h4 style="font-family: 'Noto Sans TC'; display: inline">已報名課程</h4>
 
   <!--
       <div class="w3-card-4" style="width:100%">
@@ -140,14 +146,15 @@
           <p>日期時間:</p>
           <p>費用:</p>
         </div>
-        <button class="w3-button w3-block w3-indigo" onclick="cardButton(1)">報名</button>
+        <button class="w3-button w3-block w3-indigo" onclick="報名課程(1)">報名</button>
       </div>
   -->
     </div> 
                  
     <hr>
     <div class="w3-container" id="oldCourses" style="font-family: 'Noto Sans TC'">
-      <h4 style="font-family: 'Noto Sans TC'">已到期報名課程</h4>
+      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCourses()"><i class="fa fa-refresh" style="margin-left: -3px"></i></button></span>     
+      <h4 style="font-family: 'Noto Sans TC'; display: inline">已到期報名課程</h4>
 
   <!--
       <div class="w3-card-4" style="width:100%">
@@ -159,7 +166,7 @@
           <p>日期時間:</p>
           <p>費用:</p>
         </div>
-        <button class="w3-button w3-block w3-indigo" onclick="cardButton(1)">報名</button>
+        <button class="w3-button w3-block w3-indigo" onclick="報名課程(1)">報名</button>
       </div>
   -->
     </div>                  
@@ -501,7 +508,7 @@
       var cardStr3='<span style="float:right">日期:';
       var cardStr4='</span><p>卡路里: ';
       var cardStr5='<span style="float:right">費用: ';    
-      var cardStr6='</span></p> </div> <button class="w3-button w3-block w3-indigo" onclick="cardButton(\'';
+      var cardStr6='</span></p> </div> <button class="w3-button w3-block w3-indigo" onclick="報名課程(\'';
       var cardStr7='\')" >報名</button> </div>';
       
       var cardStr6_1='</span></p> </div> <button class="w3-button w3-block w3-grey">';
@@ -575,7 +582,7 @@
           }
         });
          
-        var paidStr = (paid)?"已繳費":"請到櫃檯繳費";
+        var paidStr = (paid)?"已繳費，請準時上課":"尚未繳費，請到櫃檯繳費";
         // 合成字串
         cardStr = cardStr1+課程編號[i] + " - " +課程名稱[i]
                  +cardStr2+老師名字[i] 
@@ -619,85 +626,48 @@
 
         $("#oldCourses").append(cardStr);
       }      
-      // ===================================================================================       
-      
-      
-      
-      
+      // ===================================================================================            
       
     };
         
     
  
     
-    function cardButton(index){
-        console.log("card Button:", index, typeof index);
+    function 報名課程(courseId){
+      console.log(userName,"報名課程:", courseId, typeof courseId);
+      
+      // call API:20 =========================================================================
+      paramToSend = "?API=20&"+"UserName="+userName+"&CourseId="+courseId;
+      console.log(paramToSend);
+//      request1 = new XMLHttpRequest()
+//      if (useLocalAPIs) {
+//        request1.open('GET', 'http://localhost:5000' + paramToSend, true);
+//      } else {
+//        request1.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+//      }
+//
+//      request1.onload = function() {
+//        if (this.response != "API:10 courseData 讀取失敗") {
+//          courseData = JSON.parse(this.response);
+//          console.log(courseData);
+//          allDataReady++;
+//          request2.send();
+//        } else {
+//          clearInterval(checkDataReady);
+//          alert("API:10 courseData 讀取失敗")
+//        }
+//
+//      }
+//      // Send request
+//      request1.send();      
+      
     }
     
+    function refreshCourses() {
+      console.log("refresh Courses");
+      location.reload();
+    }
     
-// 以下改用 API    
-//    function readCourses(){
-//      console.log("Read Database");
-//
-//      $.loading.start('讀取課程資料');
-//
-//      var toRead = 2;
-//      var readTimes = 0;
-//      firebase.database().ref('users/林口運動中心/團課課程').once('value').then(function (snapshot) {
-//        console.log("data read done");
-//        readTimes++;
-//        var result = snapshot.val();
-//        courseData = JSON.parse(result.現在課程);
-//        courseHistory = JSON.parse(result.過去課程);
-//        console.log("courseData/history read done");
-//
-////        if (courseData.length>0) {
-////          var tmp1 = courseData[courseData.length - 1][0];
-////          var tmp2 = parseInt(tmp1.substr(1, 4));
-////        } else tmp2 = 0;
-////
-////        if (courseHistory.length>0) {    
-////          var tmp3 = courseHistory[courseHistory.length - 1][0];
-////          var tmp4 = parseInt(tmp3.substr(1, 4));  
-////        } else tmp4 = 0;
-////
-////        courseNum = (tmp4 > tmp2)? tmp4:tmp2;
-//
-//        //console.log(courseNum);
-//
-//        //refreshCourse();
-//
-//        if (readTimes == toRead) $.loading.end();
-//      });
-//
-////      firebase.database().ref('users/林口運動中心/客戶管理').once('value').then(function (snapshot) {
-////        console.log("member read done");
-////        readTimes++;
-////        var result = snapshot.val();
-////        memberData = JSON.parse(result.會員資料);
-////
-////        if (readTimes == toRead) $.loading.end();
-////      });
-//
-//      firebase.database().ref('users/林口運動中心/課程管理').once('value').then(function (snapshot) {
-//        console.log("courseMember read done");
-//        readTimes++;
-//        var result = snapshot.val();
-//        courseMember = JSON.parse(result.課程會員);
-//
-//        if (readTimes == toRead) $.loading.end();
-//      });
-//
-////      firebase.database().ref('users/林口運動中心/教練管理').once('value').then(function (snapshot) {
-////        console.log("Coach read done");
-////        readTimes++;
-////        var result = snapshot.val();
-////        coachSet = JSON.parse(result.老師資料);
-////
-////        if (readTimes == toRead) $.loading.end();
-////      });  
-//
-//    };
     
   </script>
 
