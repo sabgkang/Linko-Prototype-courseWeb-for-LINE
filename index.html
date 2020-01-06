@@ -7,7 +7,7 @@
   <!--  設定參數-->
   <script>
     var useLocalAPIs = false;
-    var version = "0.32";
+    var version = "0.5";
   </script>
   
   <meta charset="UTF-8">
@@ -639,27 +639,25 @@
       // call API:20 =========================================================================
       paramToSend = "?API=20&"+"UserName="+userName+"&CourseId="+courseId;
       console.log(paramToSend);
-//      request1 = new XMLHttpRequest()
-//      if (useLocalAPIs) {
-//        request1.open('GET', 'http://localhost:5000' + paramToSend, true);
-//      } else {
-//        request1.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
-//      }
-//
-//      request1.onload = function() {
-//        if (this.response != "API:10 courseData 讀取失敗") {
+      var request = new XMLHttpRequest()
+      if (useLocalAPIs) {
+        request.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+      }
+
+      request.onload = function() {
+        alert(this.response);
+        refreshCourses();
+//        if (this.response != "API:20 會員報名失敗") {
 //          courseData = JSON.parse(this.response);
 //          console.log(courseData);
-//          allDataReady++;
-//          request2.send();
 //        } else {
-//          clearInterval(checkDataReady);
-//          alert("API:10 courseData 讀取失敗")
+//          alert("API:20 會員報名失敗")
 //        }
-//
-//      }
-//      // Send request
-//      request1.send();      
+      }
+      // Send request
+      request.send();      
       
     }
     

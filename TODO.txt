@@ -1,5 +1,0 @@
-TODO:
-需要的 API
-1. read courseData/courseHistory
-2. read courseMember
-3. 報名寫入 courseMember with  ["courseID", ["userName", "未繳費", "未簽到"]]
