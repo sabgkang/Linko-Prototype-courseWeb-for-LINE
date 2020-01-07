@@ -206,9 +206,9 @@
           initialLoad = false;
         } else {
           mescroll.endSuccess(); 
-          console.log("reload", mescroll.isDownScrolling);         
-          //if (mescroll.isDownScrolling) {   
-          location.reload();
+          console.log("reload", mescroll.isDownScrolling);    
+          
+          setTimeout(function(){location.reload();}, 500);
           //}
 
         }        
