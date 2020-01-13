@@ -7,7 +7,7 @@
   <!--  設定參數-->
   <script>
     var useLocalAPIs = false;
-    var version = "0.6";
+    var version = "0.61";
   </script>
   
   <meta charset="UTF-8">
@@ -68,8 +68,8 @@
 
   <div id="joinForm" class="w3-container bg" style="font-family: 'Noto Sans TC'">
     <p>
-      <label>姓名(必填)</label>
-      <input id="name" class="w3-input" type="text"></p>
+      <label>姓名(LINE 暱稱)</label>
+      <label id="name" class="w3-input"></p>
     <p>
       <label>姓別(必填，Inbody 量測需要)</label>
       <select id="gender" class="w3-select" name="option">
@@ -193,7 +193,7 @@
       console.log("使用放在 Heroku 上的 API 服務");
     }
     
-  var initialLoad = true;
+    var initialLoad = true;
 
     // mescroll 下拉 回彈 更新=======================
     var mescroll = new MeScroll("mescroll", {
@@ -269,7 +269,7 @@
 
         checkUserIdExist();
 
-        $("#name").val(decodeURI(displayName[1]));
+        $("#name").text(decodeURI(displayName[1]));
 
 
       } else {
