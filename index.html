@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 
-<!--處理輸入參數 ?displayName=小陳&userId=U12345678901234567890123456789012&pictureUrl=www.google.com-->
+<!--處理輸入參數 ?displayName=小林&userId=U12345678901234567890123456789012&pictureUrl=www.google.com-->
 
 <head>
   <!--  設定參數-->
   <script>
     var useLocalAPIs = false;
-    var version = "0.61";
+    var version = "0.7";
   </script>
   
   <meta charset="UTF-8">
@@ -60,7 +60,7 @@
 <body>
 <div id="mescroll" class="mescroll"> 
   <div id="joinFormHeader" class="w3-container w3-blue">
-    <h2 style="font-family: 'Noto Sans TC'">加入林口運動中心會員 
+    <h2 style="font-family: 'Noto Sans TC'">請提供參加團體課程，挑戰賽及使用優惠券的必要資料 
       <span id="versionStr" style="float: right; font-size: 0.5em;"></span>
     </h2>
     
@@ -94,10 +94,10 @@
       <label>地址(建議，聯絡使用)</label>
       <input id="address" class="w3-input" type="text"></p>
     <p>
-      <button class="w3-btn w3-block w3-indigo" onclick="addConfirm()">加入會員</button>
+      <button class="w3-btn w3-block w3-indigo" onclick="addConfirm()">送出資料</button>
     </p>
     <p>
-      <label>點擊 加入會員 表示您同意以下隱私權以及資料使用條款聲明</label>
+      <label>點擊 送出資料 表示您同意以下隱私權以及資料使用條款聲明</label>
     </p>
   </div>
 
@@ -245,7 +245,7 @@
     $("#joinForm").hide();
     $("#joinFormHeader").hide();
     
-    // 處理輸入參數 ?displayName=小陳&userId=U12345678901234567890123456789012&pictureUrl=www.google.com
+    // 處理輸入參數 ?displayName=小林&userId=U12345678901234567890123456789012&pictureUrl=www.google.com
     var inputParam = inputParamString.split("&");
     // inputParam[0]="?displayName=..."
     // inputParam[1]="userId=..."
@@ -262,10 +262,10 @@
     }
 
     if (!inputError) {
-      console.log(displayName, userId, pictureUrl);
+      //console.log(displayName, userId, pictureUrl);
 
       if (userId[0] == "userId" && userId[1].length==33 ) {
-        console.log("valid UserId ", userId[1]);
+        //console.log("valid UserId ", userId[1]);
 
         checkUserIdExist();
 
@@ -297,7 +297,7 @@
         if (this.response == "API:00 會員不存在") {
           $("#joinForm").show();
           $("#joinFormHeader").show();
-          alert("還不是會員，請先加入為會員")
+          alert("為了讓您更容易使用團體課程，挑戰賽及使用優惠券，請填寫必要資料");
         } else {
           $("#joinForm").hide();
           $("#joinFormHeader").hide();
@@ -311,7 +311,7 @@
         }
       }
       // Send API request 
-      $.loading.start('檢查是否已是會員');
+      $.loading.start('檢查是否已填寫必要資料');
      
       request.send();
     }
@@ -330,15 +330,15 @@
       }
 
       paramToSend = "?API=01" +
-        "&UserId=" + userId[1] +
         "&Name=" + $("#name").text() +
         "&Gender=" + $("#gender").val() +     
         "&Birth=" + $("#birthday").val() +
         "&Phone=" + $("#phone").val() +
         "&ID=" + $("#identity").val() +
         "&Address=" + $("#address").val() +
-        "&Height=" + $("#bodyHeight").val() +
-        "&PicURL=" + pictureUrl[1];
+        "&UserId=" + userId[1] +        
+        "&PicURL=" + pictureUrl[1]        
+        "&Height=" + $("#bodyHeight").val();
 
       var profile = "請確認會員資料:\n" +
         "    會員姓名: " + $("#name").text() + "\n" +
@@ -372,7 +372,7 @@
             $("#joinForm").hide();
             $("#joinFormHeader").hide();
             //$("#finishMessage").css("display", "block"); 
-            alert("會員加入成功，前往團課")
+            alert("資料新增成功，前往團課")
             // 顯示團課表格
             console.log("前往團課");
             $("#courseSection").css("display", "block");
@@ -380,7 +380,7 @@
             //addCourseCards();
 
           } else {
-            alert("會員加入失敗，請洽管理員")
+            alert("資料新增失敗，請洽管理員")
             $("#joinForm").hide();
             $("#errorMessage").css("display", "block");
           }
@@ -396,32 +396,12 @@
       console.log("call API to Read Database");
       userName = decodeURI(displayName[1]);
       
-      // hard coded data, TODO: replaced with APIs ==========================================
-
-//      courseData = [
-//        ["U0003", "TEST 3", "測試 老師 #3", "2020-1-23 19:00", "300", "30", "cat", "300", ""],        
-//        ["U0004", "TEST 4", "測試 老師 #4", "2020-1-24 20:00", "400", "40", "dale", "400", ""],
-//        ["U0005", "TEST 5", "測試 老師 #5", "2020-1-25 20:00", "500", "50", "dale", "500", ""],        
-//      ];
-//      courseHistory = [
-//        ["U0001", "TEST 1", "測試 老師 #1", "2020-1-22 19:30", "100", "10", "bob", "200", ""],
-//        ["U0002", "TEST 2", "測試 老師 #2", "2020-1-21 18:30", "200", "20", "alan", "100", ""],       
-//      ];
-//      courseMember =[
-//        ["U0001", ["Paul Kang", "已繳費", "已簽到"], ["小陳", "未繳費", "未簽到"]],
-//        ["U0002", ["小琦", "已繳費", "已簽到"], ["小陳", "已繳費", "未簽到"], ["Paul Kang", "已繳費", "未簽到"]],     
-//        ["U0003", ["Paul Kang", "已繳費", "未簽到"],                          ],
-//        ["U0004", ["Paul Kang", "未繳費", "未簽到"],                          ],
-//        ["U0005",                          ],        
-//      ];
-      // =====================================================================================
-      
-
-      $.loading.start('讀取資料');
-      getDataByAPIs();
+//      $.loading.start('讀取資料');
+//      allDataReady = 0;
+//      getDataByAPIs();
 
       var checkDataReady = setInterval(function(){ 
-        console.log("aaa", allDataReady);
+        //console.log("aaa", allDataReady);
         if (allDataReady==3) {
           clearInterval(checkDataReady);
           console.log("Data is ready");
@@ -460,11 +440,15 @@
           addCourseCards();
         }
       }, 100);
+
+      $.loading.start('讀取資料');
+      allDataReady = 0;
+      getDataByAPIs(checkDataReady);      
      
     };
   
   
-    function getDataByAPIs() {
+    function getDataByAPIs(checkDataReady) {
       var request1, reuquest2, request2;
       // call API:10 =========================================================================
       paramToSend = "?API=10";      
@@ -476,14 +460,18 @@
       }
 
       request1.onload = function() {
-        if (this.response != "API:10 courseData 讀取失敗") {
+        var responseMsg = this.response;
+        
+        //responseMsg="API:10 courseData 讀取失敗"; //故意測試錯誤
+        if (responseMsg != "API:10 courseData 讀取失敗") {
           courseData = JSON.parse(this.response);
-          console.log(courseData);
+          //console.log(courseData);
           allDataReady++;
           request2.send();
         } else {
-          clearInterval(checkDataReady);
-          alert("API:10 courseData 讀取失敗")
+          clearInterval(checkDataReady); 
+          $.loading.end();
+          alert("課程資料讀取失敗，請稍後再試，或洽櫃台人員");
         }
 
       }
@@ -501,19 +489,21 @@
       }
 
       request2.onload = function() {
-        if (this.response != "API:11 courseHistory 讀取失敗") {
+        var responseMsg = this.response;
+        
+        //responseMsg="API:11 courseHistory 讀取失敗"; //故意測試錯誤        
+        if (responseMsg != "API:11 courseHistory 讀取失敗") {
           courseHistory = JSON.parse(this.response);
-          console.log(courseHistory);
+          //console.log(courseHistory);
           allDataReady++;
           request3.send();          
         } else {
           clearInterval(checkDataReady);
-          alert("API:11 courseHistory 讀取失敗")
+          $.loading.end();
+          alert("課程歷史讀取失敗，請稍後再試，或洽櫃台人員");
         }
 
       }
-      // Send request
-      //request2.send();
       // =====================================================================================      
       
 
@@ -527,18 +517,20 @@
       }
 
       request3.onload = function() {
-        if (this.response != "API:12 courseMember 讀取失敗") {
+        var responseMsg = this.response;
+        
+        //responseMsg="API:12 courseMember 讀取失敗"; //故意測試錯誤         
+        if (responseMsg != "API:12 courseMember 讀取失敗") {
           courseMember = JSON.parse(this.response);
-          console.log(courseMember);
+          //console.log(courseMember);
           allDataReady++;
         } else {
           clearInterval(checkDataReady);
-          alert("API:12 courseMember 讀取失敗")
+          $.loading.end();
+          alert("課程報名資料讀取失敗，請稍後再試，或洽櫃台人員");
         }
 
       }
-      // Send request
-      //request3.send();
       // ===================================================================================== 
       
     }
@@ -676,36 +668,87 @@
     };
         
     
- 
-    
     function 報名課程(courseId){
-      console.log(userName,"報名課程:", courseId, typeof courseId);
+      var debugMsg = true;
       
-      // call API:20 =========================================================================
-      paramToSend = "?API=20&"+"UserName="+userName+"&CourseId="+courseId;
-      console.log(paramToSend);
-      var request = new XMLHttpRequest()
+      if (debugMsg) console.log(userName,"報名課程:", courseId, typeof courseId);
+      
+      // 需用到兩個 APIs, API:13 和 API:20
+      var checkDataReady; // setInterval
+      var request1, reuquest2;
+      var APIsToCall=2;
+      var userPhoneNumber;
+      var paramToSend2;
+      allDataReady=0;
+      
+      // call API:13 =========================================================================
+      paramToSend = "?API=13&"+"UserId="+userId[1];
+      if (debugMsg) console.log(paramToSend);
+      request1 = new XMLHttpRequest()
       if (useLocalAPIs) {
-        request.open('GET', 'http://localhost:5000' + paramToSend, true);
+        request1.open('GET', 'http://localhost:5000' + paramToSend, true);
       } else {
-        request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+        request1.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
       }
 
-      request.onload = function() {
-        alert(this.response);
-        refreshCourses();
-//        if (this.response != "API:20 會員報名失敗") {
-//          courseData = JSON.parse(this.response);
-//          console.log(courseData);
-//        } else {
-//          alert("API:20 會員報名失敗")
-//        }
+      request1.onload = function() {
+        var responseMsg = this.response;
+        
+        //responseMsg="API:13 "; //故意測試錯誤
+        if (responseMsg.substr(0,6)=="API:13") {
+          alert("報名錯誤，請稍後再試，或洽櫃台人員");
+          return 1;
+        }
+
+        if (debugMsg) console.log(responseMsg);
+        userPhoneNumber = responseMsg;
+        
+        allDataReady++;
+        
+        // 進行 request2    
+        paramToSend2 = "?API=20&"+"UserName="+userName+"&CourseId="+courseId+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
+        console.log(paramToSend);        
+        
+        if (useLocalAPIs) {
+          request2.open('GET', 'http://localhost:5000' + paramToSend2, true);
+        } else {
+          request2.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend2, true);
+        }
+        
+        request2.send();
       }
       // Send request
-      request.send();      
+      request1.send();  
+          
+      // call API:20 =========================================================================
+      request2 = new XMLHttpRequest();
+      // request2 的參數在 #713 決定
+
+      request2.onload = function() {
+        var responseMsg = this.response;
+        
+        //responseMsg="API:20 會員報名成功"; //故意測試錯誤         
+        if (responseMsg != "API:20 會員報名成功") {
+          if (debugMsg) console.log(responseMsg);
+          alert("課程報名失敗，請稍後再試，或洽櫃台人員");
+        }
+          
+        allDataReady++;
+//        refreshCourses();
+      }    
+      
+      checkDataReady = setInterval(function(){ 
+        if (allDataReady==APIsToCall) {
+          clearInterval(checkDataReady);
+          console.log("課程報名完成");
+          //alert("Data is ready");
+          $.loading.end();
+          refreshCourses();          
+        }
+      }, 100);      
       
     }
-    
+      
     function refreshCourses() {
       console.log("refresh Courses");
       location.reload();
