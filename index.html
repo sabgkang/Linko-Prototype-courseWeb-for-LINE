@@ -7,7 +7,7 @@
   <!--  設定參數-->
   <script>
     var useLocalAPIs = false;
-    var version = "0.7";
+    var version = "0.8";
   </script>
   
   <meta charset="UTF-8">
@@ -236,6 +236,7 @@
     var courseData=[];
     var courseHistory=[];
     var courseMember=[];    
+    var userPhoneNumber;
     var allDataReady=0;
 
     notInCourse=[];
@@ -402,7 +403,7 @@
 
       var checkDataReady = setInterval(function(){ 
         //console.log("aaa", allDataReady);
-        if (allDataReady==3) {
+        if (allDataReady==4) {
           clearInterval(checkDataReady);
           console.log("Data is ready");
           //alert("Data is ready");
@@ -417,7 +418,7 @@
             attended = false;        
             for (var i=1; i<course.length;i++) {
               //console.log(course[i][0]);
-              if (course[i][0] == userName) {
+              if (course[i][4] == userPhoneNumber) {
                 //console.log(course[0],userName, "已參加")
                 attended = true;
               }
@@ -449,7 +450,7 @@
   
   
     function getDataByAPIs(checkDataReady) {
-      var request1, reuquest2, request2;
+      var request1, reuquest2, request3, request4;
       // call API:10 =========================================================================
       paramToSend = "?API=10";      
       request1 = new XMLHttpRequest()
@@ -524,6 +525,7 @@
           courseMember = JSON.parse(this.response);
           //console.log(courseMember);
           allDataReady++;
+          request4.send();
         } else {
           clearInterval(checkDataReady);
           $.loading.end();
@@ -532,7 +534,31 @@
 
       }
       // ===================================================================================== 
-      
+ 
+      // call API:13 =========================================================================
+      paramToSend = "?API=13&"+"UserId="+userId[1];      
+      request4 = new XMLHttpRequest()
+      if (useLocalAPIs) {
+        request4.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request4.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+      }
+
+      request4.onload = function() {
+        var responseMsg = this.response;
+        
+        //responseMsg="API:13 courseMember 讀取失敗"; //故意測試錯誤         
+        if (responseMsg.substr(0,6) != "API:13") {
+          userPhoneNumber = responseMsg;
+          allDataReady++;         
+        } else {
+          clearInterval(checkDataReady);
+          $.loading.end();
+          alert("客戶資料讀取失敗，請稍後再試，或洽櫃台人員");
+        }
+
+      }
+      // =====================================================================================      
     }
     
     function addCourseCards(){
@@ -672,59 +698,20 @@
       var debugMsg = true;
       
       if (debugMsg) console.log(userName,"報名課程:", courseId, typeof courseId);
-      
-      // 需用到兩個 APIs, API:13 和 API:20
-      var checkDataReady; // setInterval
-      var request1, reuquest2;
-      var APIsToCall=2;
-      var userPhoneNumber;
-      var paramToSend2;
-      allDataReady=0;
-      
-      // call API:13 =========================================================================
-      paramToSend = "?API=13&"+"UserId="+userId[1];
-      if (debugMsg) console.log(paramToSend);
-      request1 = new XMLHttpRequest()
-      if (useLocalAPIs) {
-        request1.open('GET', 'http://localhost:5000' + paramToSend, true);
-      } else {
-        request1.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
-      }
 
-      request1.onload = function() {
-        var responseMsg = this.response;
-        
-        //responseMsg="API:13 "; //故意測試錯誤
-        if (responseMsg.substr(0,6)=="API:13") {
-          alert("報名錯誤，請稍後再試，或洽櫃台人員");
-          return 1;
-        }
-
-        if (debugMsg) console.log(responseMsg);
-        userPhoneNumber = responseMsg;
-        
-        allDataReady++;
-        
-        // 進行 request2    
-        paramToSend2 = "?API=20&"+"UserName="+userName+"&CourseId="+courseId+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
-        console.log(paramToSend);        
-        
-        if (useLocalAPIs) {
-          request2.open('GET', 'http://localhost:5000' + paramToSend2, true);
-        } else {
-          request2.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend2, true);
-        }
-        
-        request2.send();
-      }
-      // Send request
-      request1.send();  
-          
+      var request; 
+       
       // call API:20 =========================================================================
-      request2 = new XMLHttpRequest();
-      // request2 的參數在 #713 決定
+      request = new XMLHttpRequest();
+      paramToSend = "?API=20&"+"UserName="+userName+"&CourseId="+courseId+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
+      console.log(paramToSend); 
+      if (useLocalAPIs) {
+        request.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+      }      
 
-      request2.onload = function() {
+      request.onload = function() {
         var responseMsg = this.response;
         
         //responseMsg="API:20 會員報名成功"; //故意測試錯誤         
@@ -733,28 +720,18 @@
           alert("課程報名失敗，請稍後再試，或洽櫃台人員");
         }
           
-        allDataReady++;
-//        refreshCourses();
-      }    
-      
-      checkDataReady = setInterval(function(){ 
-        if (allDataReady==APIsToCall) {
-          clearInterval(checkDataReady);
-          console.log("課程報名完成");
-          //alert("Data is ready");
-          $.loading.end();
-          refreshCourses();          
-        }
-      }, 100);      
-      
+        //allDataReady++;
+        refreshCourses();
+      } 
+      request.send();
+          
     }
       
     function refreshCourses() {
       console.log("refresh Courses");
       location.reload();
     }
-    
-    
+      
   </script>
 
 </body>
