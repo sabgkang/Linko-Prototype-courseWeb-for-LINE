@@ -61,7 +61,7 @@
 <div id="mescroll" class="mescroll"> 
   <div id="joinFormHeader" class="w3-container w3-blue">
     <h2 style="font-family: 'Noto Sans TC'">請提供參加團體課程，挑戰賽及使用優惠券的必要資料 
-      <span id="versionStr" style="float: right; font-size: 0.5em;"></span>
+      <span id="versionStr1" style="float: right; font-size: 0.5em;"></span>
     </h2>
     
   </div>
@@ -119,7 +119,7 @@
   <div id="courseSection" style="display: none">
     <div id="courseSectionHeader" class="w3-container w3-blue">
       <h2 style="font-family: 'Noto Sans TC'">我的團課 
-        <span id="versionStr" style="float: right; font-size: 0.5em;"></span>
+        <span id="versionStr2" style="float: right; font-size: 0.5em;"></span>
       </h2>
     </div> 
          
@@ -186,7 +186,8 @@
   </div>  
   </div>
   <script>
-    $("#versionStr").text("v."+version);
+    $("#versionStr1").text("v."+version);
+    $("#versionStr2").text("v."+version);    
     if (useLocalAPIs) {
       console.log("使用 local API 服務");
     } else {
